@@ -1,0 +1,1462 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-12-03T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "wrk_sigea",
+      "parentId": null,
+      "modified": 1701561600000,
+      "created": 1701561600000,
+      "name": "SIGEA API",
+      "description": "Sistema de Gestão Escolar Acadêmica - Backend API",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_base",
+      "parentId": "wrk_sigea",
+      "modified": 1701561600000,
+      "created": 1701561600000,
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3000/api",
+        "token": ""
+      },
+      "dataPropertyOrder": {
+        "&": [
+          "base_url",
+          "token"
+        ]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1701561600000,
+      "_type": "environment"
+    },
+    {
+      "_id": "fld_auth",
+      "parentId": "wrk_sigea",
+      "modified": 1701561600000,
+      "created": 1701561600000,
+      "name": "🔐 Auth",
+      "description": "Autenticação e gerenciamento de usuários",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1701561600001,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_login",
+      "parentId": "fld_auth",
+      "modified": 1701561600000,
+      "created": 1701561600000,
+      "url": "{{ _.base_url }}/auth/login",
+      "name": "Login",
+      "description": "Realiza login e retorna token JWT",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"admin@sigea.com\",\n  \"senha\": \"123456\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1701561600001,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_register",
+      "parentId": "fld_auth",
+      "modified": 1701561600000,
+      "created": 1701561600000,
+      "url": "{{ _.base_url }}/auth/register",
+      "name": "Registrar Usuário",
+      "description": "Cria novo usuário no sistema",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Novo Usuário\",\n  \"email\": \"novo@sigea.com\",\n  \"senha\": \"123456\",\n  \"role\": \"PROFESSOR\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1701561600000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_me",
+      "parentId": "fld_auth",
+      "modified": 1701561600000,
+      "created": 1701561600000,
+      "url": "{{ _.base_url }}/auth/profile",
+      "name": "Perfil do Usuário Logado",
+      "description": "Retorna dados do usuário autenticado",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1701561599999,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_escolas",
+      "parentId": "wrk_sigea",
+      "modified": 1701561600000,
+      "created": 1701561600000,
+      "name": "🏫 Escolas",
+      "description": "CRUD de Escolas",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1701561600000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_escolas_list",
+      "parentId": "fld_escolas",
+      "modified": 1701561600000,
+      "created": 1701561600000,
+      "url": "{{ _.base_url }}/escolas",
+      "name": "Listar Escolas",
+      "description": "Lista todas as escolas com paginação",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "disabled": true
+        },
+        {
+          "name": "limit",
+          "value": "10",
+          "disabled": true
+        },
+        {
+          "name": "search",
+          "value": "",
+          "disabled": true
+        },
+        {
+          "name": "order",
+          "value": "asc",
+          "disabled": true
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1701561600005,
+      "_type": "request"
+    },
+    {
+      "_id": "req_escolas_get",
+      "parentId": "fld_escolas",
+      "modified": 1701561600000,
+      "created": 1701561600000,
+      "url": "{{ _.base_url }}/escolas/1",
+      "name": "Buscar Escola por ID",
+      "description": "Retorna uma escola específica",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1701561600004,
+      "_type": "request"
+    },
+    {
+      "_id": "req_escolas_create",
+      "parentId": "fld_escolas",
+      "modified": 1701561600000,
+      "created": 1701561600000,
+      "url": "{{ _.base_url }}/escolas",
+      "name": "Criar Escola",
+      "description": "Cria uma nova escola",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Nova Escola Teste\",\n  \"cnpj\": \"12345678000199\",\n  \"telefone\": \"(61) 3333-9999\",\n  \"email\": \"nova@escola.com\",\n  \"regiaoAdministrativa\": \"Asa Norte\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1701561600003,
+      "_type": "request"
+    },
+    {
+      "_id": "req_escolas_update",
+      "parentId": "fld_escolas",
+      "modified": 1701561600000,
+      "created": 1701561600000,
+      "url": "{{ _.base_url }}/escolas/1",
+      "name": "Atualizar Escola",
+      "description": "Atualiza dados de uma escola",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Escola Atualizada\",\n  \"telefone\": \"(61) 3333-0000\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1701561600002,
+      "_type": "request"
+    },
+    {
+      "_id": "req_escolas_delete",
+      "parentId": "fld_escolas",
+      "modified": 1701561600000,
+      "created": 1701561600000,
+      "url": "{{ _.base_url }}/escolas/99",
+      "name": "Deletar Escola",
+      "description": "Remove uma escola",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1701561600001,
+      "_type": "request"
+    },
+    {
+      "_id": "req_escolas_turmas",
+      "parentId": "fld_escolas",
+      "url": "{{ _.base_url }}/escolas/1/turmas",
+      "name": "Listar Turmas da Escola",
+      "description": "Lista todas as turmas de uma escola",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_escolas_professores",
+      "parentId": "fld_escolas",
+      "url": "{{ _.base_url }}/escolas/1/professores",
+      "name": "Listar Professores da Escola",
+      "description": "Lista todos os professores de uma escola",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_escolas_coordenadores",
+      "parentId": "fld_escolas",
+      "url": "{{ _.base_url }}/escolas/1/coordenadores",
+      "name": "Listar Coordenadores da Escola",
+      "description": "Lista todos os coordenadores de uma escola",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "fld_alunos",
+      "parentId": "wrk_sigea",
+      "modified": 1701561600000,
+      "created": 1701561600000,
+      "name": "👨‍🎓 Alunos",
+      "description": "CRUD de Alunos",
+      "environment": {},
+      "metaSortKey": -1701561599999,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_alunos_list",
+      "parentId": "fld_alunos",
+      "url": "{{ _.base_url }}/alunos",
+      "name": "Listar Alunos",
+      "method": "GET",
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "disabled": true
+        },
+        {
+          "name": "limit",
+          "value": "10",
+          "disabled": true
+        },
+        {
+          "name": "search",
+          "value": "",
+          "disabled": true
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_alunos_get",
+      "parentId": "fld_alunos",
+      "url": "{{ _.base_url }}/alunos/1",
+      "name": "Buscar Aluno por ID",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_alunos_matricula",
+      "parentId": "fld_alunos",
+      "url": "{{ _.base_url }}/alunos/matricula/2025001",
+      "name": "Buscar Aluno por Matrícula",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_alunos_notas",
+      "parentId": "fld_alunos",
+      "url": "{{ _.base_url }}/alunos/1/notas",
+      "name": "Listar Notas do Aluno",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_alunos_create",
+      "parentId": "fld_alunos",
+      "url": "{{ _.base_url }}/alunos",
+      "name": "Criar Aluno",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"idTurma\": 1,\n  \"nome\": \"Novo Aluno Teste\",\n  \"matricula\": \"2025999\",\n  \"dataNascimento\": \"2012-05-15\",\n  \"email\": \"aluno@email.com\",\n  \"telefoneResponsavel\": \"(61) 98888-7777\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_alunos_update",
+      "parentId": "fld_alunos",
+      "url": "{{ _.base_url }}/alunos/1",
+      "name": "Atualizar Aluno",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Aluno Atualizado\",\n  \"email\": \"atualizado@email.com\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_alunos_delete",
+      "parentId": "fld_alunos",
+      "url": "{{ _.base_url }}/alunos/99",
+      "name": "Deletar Aluno",
+      "method": "DELETE",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "fld_turmas",
+      "parentId": "wrk_sigea",
+      "name": "🎒 Turmas",
+      "description": "CRUD de Turmas",
+      "metaSortKey": -1701561599998,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_turmas_list",
+      "parentId": "fld_turmas",
+      "url": "{{ _.base_url }}/turmas",
+      "name": "Listar Turmas",
+      "method": "GET",
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1",
+          "disabled": true
+        },
+        {
+          "name": "limit",
+          "value": "10",
+          "disabled": true
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_turmas_get",
+      "parentId": "fld_turmas",
+      "url": "{{ _.base_url }}/turmas/1",
+      "name": "Buscar Turma por ID",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_turmas_alunos",
+      "parentId": "fld_turmas",
+      "url": "{{ _.base_url }}/turmas/1/alunos",
+      "name": "Listar Alunos da Turma",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_turmas_create",
+      "parentId": "fld_turmas",
+      "url": "{{ _.base_url }}/turmas",
+      "name": "Criar Turma",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"idEscola\": 1,\n  \"nome\": \"7º Ano C\",\n  \"anoLetivo\": 2025,\n  \"serie\": \"7º Ano\",\n  \"turno\": \"Vespertino\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_turmas_update",
+      "parentId": "fld_turmas",
+      "url": "{{ _.base_url }}/turmas/1",
+      "name": "Atualizar Turma",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"6º Ano A - Atualizado\",\n  \"turno\": \"Matutino\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_turmas_delete",
+      "parentId": "fld_turmas",
+      "url": "{{ _.base_url }}/turmas/99",
+      "name": "Deletar Turma",
+      "method": "DELETE",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "fld_professores",
+      "parentId": "wrk_sigea",
+      "name": "👩‍🏫 Professores",
+      "description": "CRUD de Professores",
+      "metaSortKey": -1701561599997,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_professores_list",
+      "parentId": "fld_professores",
+      "url": "{{ _.base_url }}/professores",
+      "name": "Listar Professores",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_professores_get",
+      "parentId": "fld_professores",
+      "url": "{{ _.base_url }}/professores/1",
+      "name": "Buscar Professor por ID",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_professores_create",
+      "parentId": "fld_professores",
+      "url": "{{ _.base_url }}/professores",
+      "name": "Criar Professor",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"idEscola\": 1,\n  \"nome\": \"Prof. Novo Teste\",\n  \"email\": \"prof.teste@escola.com\",\n  \"telefone\": \"(61) 99999-8888\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_professores_update",
+      "parentId": "fld_professores",
+      "url": "{{ _.base_url }}/professores/1",
+      "name": "Atualizar Professor",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Prof. Atualizado\",\n  \"telefone\": \"(61) 99999-0000\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_professores_delete",
+      "parentId": "fld_professores",
+      "url": "{{ _.base_url }}/professores/99",
+      "name": "Deletar Professor",
+      "method": "DELETE",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "fld_disciplinas",
+      "parentId": "wrk_sigea",
+      "name": "📚 Disciplinas",
+      "metaSortKey": -1701561599996,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_disciplinas_list",
+      "parentId": "fld_disciplinas",
+      "url": "{{ _.base_url }}/disciplinas",
+      "name": "Listar Disciplinas",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_disciplinas_get",
+      "parentId": "fld_disciplinas",
+      "url": "{{ _.base_url }}/disciplinas/1",
+      "name": "Buscar Disciplina por ID",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_disciplinas_create",
+      "parentId": "fld_disciplinas",
+      "url": "{{ _.base_url }}/disciplinas",
+      "name": "Criar Disciplina",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Filosofia\",\n  \"cargaHoraria\": 40,\n  \"areaConhecimento\": \"Ciências Humanas\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_disciplinas_update",
+      "parentId": "fld_disciplinas",
+      "url": "{{ _.base_url }}/disciplinas/1",
+      "name": "Atualizar Disciplina",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"cargaHoraria\": 80\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_disciplinas_delete",
+      "parentId": "fld_disciplinas",
+      "url": "{{ _.base_url }}/disciplinas/99",
+      "name": "Deletar Disciplina",
+      "method": "DELETE",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "fld_coordenadores",
+      "parentId": "wrk_sigea",
+      "name": "👔 Coordenadores",
+      "metaSortKey": -1701561599995,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_coordenadores_list",
+      "parentId": "fld_coordenadores",
+      "url": "{{ _.base_url }}/coordenadores",
+      "name": "Listar Coordenadores",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_coordenadores_get",
+      "parentId": "fld_coordenadores",
+      "url": "{{ _.base_url }}/coordenadores/1",
+      "name": "Buscar Coordenador por ID",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_coordenadores_create",
+      "parentId": "fld_coordenadores",
+      "url": "{{ _.base_url }}/coordenadores",
+      "name": "Criar Coordenador",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"idEscola\": 1,\n  \"nome\": \"Coord. Novo Teste\",\n  \"email\": \"coord.teste@escola.com\",\n  \"telefone\": \"(61) 99999-7777\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_coordenadores_update",
+      "parentId": "fld_coordenadores",
+      "url": "{{ _.base_url }}/coordenadores/1",
+      "name": "Atualizar Coordenador",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Coord. Atualizado\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_coordenadores_delete",
+      "parentId": "fld_coordenadores",
+      "url": "{{ _.base_url }}/coordenadores/99",
+      "name": "Deletar Coordenador",
+      "method": "DELETE",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "fld_periodos",
+      "parentId": "wrk_sigea",
+      "name": "📅 Períodos Letivos",
+      "metaSortKey": -1701561599994,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_periodos_list",
+      "parentId": "fld_periodos",
+      "url": "{{ _.base_url }}/periodos",
+      "name": "Listar Períodos",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_periodos_get",
+      "parentId": "fld_periodos",
+      "url": "{{ _.base_url }}/periodos/1",
+      "name": "Buscar Período por ID",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_periodos_create",
+      "parentId": "fld_periodos",
+      "url": "{{ _.base_url }}/periodos",
+      "name": "Criar Período",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"ano\": 2025,\n  \"etapa\": \"5º Bimestre\",\n  \"dataInicio\": \"2025-11-01\",\n  \"dataFim\": \"2025-12-20\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_periodos_update",
+      "parentId": "fld_periodos",
+      "url": "{{ _.base_url }}/periodos/1",
+      "name": "Atualizar Período",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"dataFim\": \"2025-04-15\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_periodos_delete",
+      "parentId": "fld_periodos",
+      "url": "{{ _.base_url }}/periodos/99",
+      "name": "Deletar Período",
+      "method": "DELETE",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "fld_vinculos",
+      "parentId": "wrk_sigea",
+      "name": "🔗 Vínculos Turma-Professor",
+      "metaSortKey": -1701561599993,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_vinculos_list",
+      "parentId": "fld_vinculos",
+      "url": "{{ _.base_url }}/vinculos",
+      "name": "Listar Vínculos",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_vinculos_get",
+      "parentId": "fld_vinculos",
+      "url": "{{ _.base_url }}/vinculos/1",
+      "name": "Buscar Vínculo por ID",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_vinculos_turma",
+      "parentId": "fld_vinculos",
+      "url": "{{ _.base_url }}/vinculos/turma/1",
+      "name": "Vínculos por Turma",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_vinculos_professor",
+      "parentId": "fld_vinculos",
+      "url": "{{ _.base_url }}/vinculos/professor/1",
+      "name": "Vínculos por Professor",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_vinculos_create",
+      "parentId": "fld_vinculos",
+      "url": "{{ _.base_url }}/vinculos",
+      "name": "Criar Vínculo",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"idTurma\": 1,\n  \"idProfessor\": 1,\n  \"idDisciplina\": 4\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_vinculos_delete",
+      "parentId": "fld_vinculos",
+      "url": "{{ _.base_url }}/vinculos/99",
+      "name": "Deletar Vínculo",
+      "method": "DELETE",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "fld_avaliacoes",
+      "parentId": "wrk_sigea",
+      "name": "📝 Avaliações",
+      "metaSortKey": -1701561599992,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_avaliacoes_list",
+      "parentId": "fld_avaliacoes",
+      "url": "{{ _.base_url }}/avaliacoes",
+      "name": "Listar Avaliações",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_avaliacoes_get",
+      "parentId": "fld_avaliacoes",
+      "url": "{{ _.base_url }}/avaliacoes/1",
+      "name": "Buscar Avaliação por ID",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_avaliacoes_vinculo",
+      "parentId": "fld_avaliacoes",
+      "url": "{{ _.base_url }}/avaliacoes/vinculo/1",
+      "name": "Avaliações por Vínculo (Turma-Professor)",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_avaliacoes_download",
+      "parentId": "fld_avaliacoes",
+      "url": "{{ _.base_url }}/avaliacoes/1/arquivo",
+      "name": "Download Arquivo da Prova",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_avaliacoes_delete_arquivo",
+      "parentId": "fld_avaliacoes",
+      "url": "{{ _.base_url }}/avaliacoes/1/arquivo",
+      "name": "Remover Arquivo da Prova",
+      "description": "Remove apenas o arquivo PDF, mantendo a avaliação",
+      "method": "DELETE",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_avaliacoes_create",
+      "parentId": "fld_avaliacoes",
+      "url": "{{ _.base_url }}/avaliacoes",
+      "name": "Criar Avaliação",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"idTurmaProfessor\": 1,\n  \"idPeriodoLetivo\": 1,\n  \"titulo\": \"Prova 2 - Frações\",\n  \"tipo\": \"Prova\",\n  \"dataAplicacao\": \"2025-04-20\",\n  \"peso\": 2.0\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_avaliacoes_update",
+      "parentId": "fld_avaliacoes",
+      "url": "{{ _.base_url }}/avaliacoes/1",
+      "name": "Atualizar Avaliação",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"titulo\": \"Prova Atualizada\",\n  \"peso\": 2.5\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_avaliacoes_delete",
+      "parentId": "fld_avaliacoes",
+      "url": "{{ _.base_url }}/avaliacoes/99",
+      "name": "Deletar Avaliação",
+      "method": "DELETE",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "fld_notas",
+      "parentId": "wrk_sigea",
+      "name": "📊 Notas",
+      "metaSortKey": -1701561599991,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_notas_list",
+      "parentId": "fld_notas",
+      "url": "{{ _.base_url }}/notas",
+      "name": "Listar Notas",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_notas_get",
+      "parentId": "fld_notas",
+      "url": "{{ _.base_url }}/notas/1",
+      "name": "Buscar Nota por ID",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_notas_avaliacao",
+      "parentId": "fld_notas",
+      "url": "{{ _.base_url }}/notas/avaliacao/1",
+      "name": "Notas por Avaliação",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_notas_aluno",
+      "parentId": "fld_notas",
+      "url": "{{ _.base_url }}/notas/aluno/1",
+      "name": "Notas por Aluno",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_notas_create",
+      "parentId": "fld_notas",
+      "url": "{{ _.base_url }}/notas",
+      "name": "Lançar Nota",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"idAvaliacao\": 1,\n  \"idAluno\": 3,\n  \"notaObtida\": 8.5\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_notas_batch",
+      "parentId": "fld_notas",
+      "url": "{{ _.base_url }}/notas/batch",
+      "name": "Lançar Notas em Lote",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"idAvaliacao\": 1,\n  \"notas\": [\n    { \"idAluno\": 3, \"notaObtida\": 9.0 },\n    { \"idAluno\": 4, \"notaObtida\": 7.5 },\n    { \"idAluno\": 5, \"notaObtida\": 8.0 }\n  ]\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_notas_update",
+      "parentId": "fld_notas",
+      "url": "{{ _.base_url }}/notas/1",
+      "name": "Atualizar Nota",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"notaObtida\": 9.5\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_notas_delete",
+      "parentId": "fld_notas",
+      "url": "{{ _.base_url }}/notas/99",
+      "name": "Deletar Nota",
+      "method": "DELETE",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "fld_regras",
+      "parentId": "wrk_sigea",
+      "name": "📋 Regras de Aprovação",
+      "metaSortKey": -1701561599990,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_regras_list",
+      "parentId": "fld_regras",
+      "url": "{{ _.base_url }}/regras",
+      "name": "Listar Regras",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_regras_get",
+      "parentId": "fld_regras",
+      "url": "{{ _.base_url }}/regras/1",
+      "name": "Buscar Regra por ID",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_regras_escola",
+      "parentId": "fld_regras",
+      "url": "{{ _.base_url }}/regras/escola/1",
+      "name": "Regras por Escola",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_regras_create",
+      "parentId": "fld_regras",
+      "url": "{{ _.base_url }}/regras",
+      "name": "Criar Regra",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"idEscola\": 1,\n  \"idCoordenador\": 1,\n  \"anoLetivo\": 2026,\n  \"mediaMinima\": 7.0\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_regras_update",
+      "parentId": "fld_regras",
+      "url": "{{ _.base_url }}/regras/1",
+      "name": "Atualizar Regra",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"mediaMinima\": 6.5\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_regras_delete",
+      "parentId": "fld_regras",
+      "url": "{{ _.base_url }}/regras/99",
+      "name": "Deletar Regra",
+      "method": "DELETE",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "_type": "request"
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+// ============================================
+// SIGEA Backend - Schema Prisma
+// ============================================
+// Sistema de Gestão Escolar Acadêmica
+// Banco de dados: PostgreSQL
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENTIDADES DE AUTENTICAÇÃO
+// ============================================
+
+/// Usuário do sistema para autenticação
+/// Pode ser vinculado a coordenador, professor ou admin
+model Usuario {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique @db.VarChar(100)
+  senhaHash  String   @map("senha_hash") @db.VarChar(255)
+  nome       String   @db.VarChar(100)
+  role       Role     @default(PROFESSOR)
+  ativo      Boolean  @default(true)
+  criadoEm   DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  @@map("usuario")
+}
+
+/// Roles/Papéis de usuário no sistema
+enum Role {
+  ADMIN
+  COORDENADOR
+  PROFESSOR
+}
+
+// ============================================
+// ENTIDADES RAIZ (sem dependências de FK)
+// ============================================
+
+/// Escola - Entidade principal do sistema
+/// Uma escola possui coordenadores, professores, turmas e regras de aprovação
+model Escola {
+  id                   Int      @id @default(autoincrement()) @map("id_escola")
+  nome                 String   @db.VarChar(100)
+  cnpj                 String?  @db.Char(14)
+  telefone             String?  @db.VarChar(20)
+  email                String?  @db.VarChar(100)
+  regiaoAdministrativa String?  @map("regiao_administrativa") @db.VarChar(100)
+
+  // Relacionamentos
+  coordenadores   Coordenador[]
+  professores     Professor[]
+  turmas          Turma[]
+  regrasAprovacao RegraAprovacao[]
+
+  @@map("escola")
+}
+
+/// Disciplina - Matérias/componentes curriculares
+/// Ex: Matemática, Português, História, etc.
+model Disciplina {
+  id               Int     @id @default(autoincrement()) @map("id_disciplina")
+  nome             String  @db.VarChar(100)
+  cargaHoraria     Int?    @map("carga_horaria")
+  areaConhecimento String? @map("area_conhecimento") @db.VarChar(100)
+
+  // Relacionamentos
+  turmasProfessores TurmaProfessor[]
+
+  @@map("disciplina")
+}
+
+/// Período Letivo - Bimestres, trimestres ou semestres
+/// Define o intervalo de tempo para avaliações
+model PeriodoLetivo {
+  id         Int       @id @default(autoincrement()) @map("id_periodo_letivo")
+  ano        Int
+  etapa      String    @db.VarChar(30) // Ex: "1º Bimestre", "2º Semestre"
+  dataInicio DateTime? @map("data_inicio") @db.Date
+  dataFim    DateTime? @map("data_fim") @db.Date
+
+  // Relacionamentos
+  avaliacoes Avaliacao[]
+
+  @@map("periodo_letivo")
+}
+
+// ============================================
+// ENTIDADES DEPENDENTES DE ESCOLA
+// ============================================
+
+/// Coordenador - Responsável pedagógico da escola
+/// Define regras de aprovação e supervisiona professores
+model Coordenador {
+  id        Int     @id @default(autoincrement()) @map("id_coordenador")
+  idEscola  Int     @map("id_escola")
+  nome      String  @db.VarChar(100)
+  email     String? @db.VarChar(100)
+  telefone  String? @db.VarChar(20)
+
+  // Relacionamentos
+  escola          Escola           @relation(fields: [idEscola], references: [id], onDelete: Cascade)
+  regrasAprovacao RegraAprovacao[]
+
+  @@map("coordenador")
+}
+
+/// Professor - Docente vinculado a uma escola
+/// Leciona disciplinas em turmas através de TurmaProfessor
+model Professor {
+  id        Int     @id @default(autoincrement()) @map("id_professor")
+  idEscola  Int     @map("id_escola")
+  nome      String  @db.VarChar(100)
+  email     String? @db.VarChar(100)
+  telefone  String? @db.VarChar(20)
+
+  // Relacionamentos
+  escola            Escola           @relation(fields: [idEscola], references: [id], onDelete: Cascade)
+  turmasProfessores TurmaProfessor[]
+
+  @@map("professor")
+}
+
+/// Turma - Classe de alunos de uma escola
+/// Ex: "9º Ano A", "3º Série B"
+model Turma {
+  id        Int     @id @default(autoincrement()) @map("id_turma")
+  idEscola  Int     @map("id_escola")
+  nome      String  @db.VarChar(50)
+  anoLetivo Int     @map("ano_letivo")
+  serie     String? @db.VarChar(20)
+  turno     String? @db.VarChar(20) // Matutino, Vespertino, Noturno
+
+  // Relacionamentos
+  escola            Escola           @relation(fields: [idEscola], references: [id], onDelete: Cascade)
+  alunos            Aluno[]
+  turmasProfessores TurmaProfessor[]
+
+  @@map("turma")
+}
+
+// ============================================
+// ENTIDADES DEPENDENTES DE TURMA/PROFESSOR
+// ============================================
+
+/// Aluno - Estudante matriculado em uma turma
+/// Possui matrícula única e recebe notas em avaliações
+model Aluno {
+  id                  Int       @id @default(autoincrement()) @map("id_aluno")
+  idTurma             Int       @map("id_turma")
+  nome                String    @db.VarChar(100)
+  matricula           String    @unique @db.VarChar(30)
+  dataNascimento      DateTime? @map("data_nascimento") @db.Date
+  email               String?  @db.VarChar(100)
+  telefoneResponsavel String?  @map("telefone_responsavel") @db.VarChar(20)
+
+  // Relacionamentos
+  turma Turma  @relation(fields: [idTurma], references: [id], onDelete: Cascade)
+  notas Nota[]
+
+  @@map("aluno")
+}
+
+/// Turma-Professor - Vínculo entre professor, turma e disciplina
+/// Define qual professor leciona qual disciplina em qual turma
+model TurmaProfessor {
+  id           Int @id @default(autoincrement()) @map("id_turma_professor")
+  idTurma      Int @map("id_turma")
+  idProfessor  Int @map("id_professor")
+  idDisciplina Int @map("id_disciplina")
+
+  // Relacionamentos
+  turma      Turma       @relation(fields: [idTurma], references: [id], onDelete: Cascade)
+  professor  Professor   @relation(fields: [idProfessor], references: [id], onDelete: Cascade)
+  disciplina Disciplina  @relation(fields: [idDisciplina], references: [id], onDelete: Cascade)
+  avaliacoes Avaliacao[]
+
+  @@map("turma_professor")
+}
+
+/// Regra de Aprovação - Critérios para aprovação de alunos
+/// Define média mínima por escola e ano letivo
+model RegraAprovacao {
+  id             Int     @id @default(autoincrement()) @map("id_regra")
+  idEscola       Int     @map("id_escola")
+  idCoordenador  Int     @map("id_coordenador")
+  anoLetivo      Int     @map("ano_letivo")
+  mediaMinima    Decimal @map("media_minima") @db.Decimal(5, 2)
+
+  // Relacionamentos
+  escola      Escola      @relation(fields: [idEscola], references: [id], onDelete: Cascade)
+  coordenador Coordenador @relation(fields: [idCoordenador], references: [id], onDelete: Cascade)
+
+  @@unique([idEscola, anoLetivo])
+  @@map("regra_aprovacao")
+}
+
+// ============================================
+// ENTIDADES DE AVALIAÇÃO
+// ============================================
+
+/// Avaliação - Prova, trabalho ou atividade avaliativa
+/// Vinculada a um professor-turma-disciplina e período letivo
+model Avaliacao {
+  id              Int      @id @default(autoincrement()) @map("id_avaliacao")
+  idTurmaProfessor Int     @map("id_turma_professor")
+  idPeriodoLetivo Int      @map("id_periodo_letivo")
+  titulo          String   @db.VarChar(100)
+  tipo            String?   @db.VarChar(30) // Prova, Trabalho, Seminário, etc.
+  dataAplicacao   DateTime  @map("data_aplicacao") @db.Date
+  peso            Decimal   @default(1.00) @db.Decimal(5, 2)
+  
+  // Campo para upload de PDF da prova (dado binário)
+  arquivoProva    Bytes?   @map("arquivo_prova")
+  nomeArquivo     String?  @map("nome_arquivo") @db.VarChar(255)
+  tipoArquivo     String?  @map("tipo_arquivo") @db.VarChar(100)
+
+  // Relacionamentos
+  turmaProfessor TurmaProfessor @relation(fields: [idTurmaProfessor], references: [id], onDelete: Cascade)
+  periodoLetivo  PeriodoLetivo  @relation(fields: [idPeriodoLetivo], references: [id], onDelete: Cascade)
+  notas          Nota[]
+
+  @@map("avaliacao")
+}
+
+/// Nota - Registro de desempenho do aluno em uma avaliação
+/// Contém a nota obtida e data de lançamento
+model Nota {
+  id             Int      @id @default(autoincrement()) @map("id_nota")
+  idAvaliacao    Int      @map("id_avaliacao")
+  idAluno        Int      @map("id_aluno")
+  notaObtida     Decimal  @map("nota_obtida") @db.Decimal(5, 2)
+  dataLancamento DateTime @default(now()) @map("data_lancamento")
+
+  // Relacionamentos
+  avaliacao Avaliacao @relation(fields: [idAvaliacao], references: [id], onDelete: Cascade)
+  aluno     Aluno     @relation(fields: [idAluno], references: [id], onDelete: Cascade)
+
+  @@map("nota")
+}

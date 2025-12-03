@@ -1,0 +1,59 @@
+{
+  "compilerOptions": {
+    /* ============================================
+     * SIGEA Backend - Configuração TypeScript
+     * ============================================
+     * Compilador configurado para Node.js 18+
+     * com suporte a ES2022 e módulos CommonJS
+     * ============================================ */
+    /* Configurações de Linguagem */
+    "target": "ES2022", // Versão ECMAScript alvo
+    "module": "commonjs", // Sistema de módulos Node.js
+    "lib": [
+      "ES2022"
+    ], // Bibliotecas disponíveis
+    "moduleResolution": "node", // Resolução de módulos estilo Node
+    /* Configurações de Saída */
+    "outDir": "./dist", // Diretório de saída compilada
+    "rootDir": "./src", // Diretório raiz do código fonte
+    "declaration": true, // Gerar arquivos .d.ts
+    "declarationMap": true, // Source maps para declarações
+    "sourceMap": true, // Gerar source maps para debug
+    /* Configurações de Verificação Estrita */
+    "strict": true, // Habilitar todas verificações estritas
+    "noImplicitAny": true, // Erro em 'any' implícito
+    "strictNullChecks": true, // Verificação estrita de null/undefined
+    "strictFunctionTypes": true, // Verificação estrita de tipos de função
+    "strictBindCallApply": true, // Verificar bind, call, apply
+    "strictPropertyInitialization": true, // Verificar inicialização de propriedades
+    "noImplicitThis": true, // Erro em 'this' implícito
+    "alwaysStrict": true, // Emitir "use strict"
+    /* Configurações Adicionais de Verificação */
+    "noUnusedLocals": true, // Erro em variáveis locais não usadas
+    "noUnusedParameters": true, // Erro em parâmetros não usados
+    "noImplicitReturns": true, // Erro em funções sem return explícito
+    "noFallthroughCasesInSwitch": true, // Erro em case sem break
+    "noUncheckedIndexedAccess": true, // Verificar acesso a índices
+    /* Configurações de Interoperabilidade */
+    "esModuleInterop": true, // Interop com módulos ES
+    "allowSyntheticDefaultImports": true, // Permitir imports default sintéticos
+    "forceConsistentCasingInFileNames": true, // Consistência em nomes de arquivos
+    "resolveJsonModule": true, // Permitir import de JSON
+    /* Configurações Experimentais */
+    "experimentalDecorators": true, // Decorators experimentais
+    "emitDecoratorMetadata": true, // Metadados de decorators
+    /* Outras Configurações */
+    "skipLibCheck": true, // Pular verificação de .d.ts
+    "incremental": true, // Build incremental
+    "tsBuildInfoFile": "./dist/.tsbuildinfo" // Arquivo de cache do build
+  },
+  "include": [
+    "src/**/*" // Incluir todo código fonte
+  ],
+  "exclude": [
+    "node_modules", // Excluir dependências
+    "dist", // Excluir saída compilada
+    "**/*.test.ts", // Excluir testes (se houver)
+    "**/*.spec.ts"
+  ]
+}
