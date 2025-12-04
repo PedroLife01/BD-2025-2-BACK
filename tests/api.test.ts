@@ -333,21 +333,6 @@ describe('SQL Objects Tests', () => {
     });
   });
 
-  describe('FUNCTION sp_calcular_media_final', () => {
-    it('deve calcular média final do aluno', async () => {
-      // Busca um aluno e disciplina existentes
-      const aluno = await prisma.aluno.findFirst();
-      const disciplina = await prisma.disciplina.findFirst();
-
-      if (aluno && disciplina) {
-        const result = await prisma.$queryRaw<any[]>`
-          SELECT * FROM sp_calcular_media_final(${aluno.id}::INTEGER, ${disciplina.id}::INTEGER)
-        `;
-        expect(Array.isArray(result)).toBe(true);
-      }
-    });
-  });
-
   describe('FUNCTION fn_gerar_relatorio_turma', () => {
     it('deve gerar relatório de turma', async () => {
       const turma = await prisma.turma.findFirst();

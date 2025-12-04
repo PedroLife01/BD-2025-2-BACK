@@ -347,7 +347,6 @@ $$ LANGUAGE plpgsql;
 -- TRIGGER FUNCTION: fn_validar_nota
 -- ==============================================
 -- Valida se a nota está dentro do intervalo 0-10
--- e se o aluno pertence à turma da avaliação
 -- ==============================================
 
 CREATE OR REPLACE FUNCTION fn_validar_nota()
@@ -356,19 +355,6 @@ BEGIN
     -- Verifica se a nota está no intervalo válido
     IF NEW.nota_obtida < 0 OR NEW.nota_obtida > 10 THEN
         RAISE EXCEPTION 'Nota deve estar entre 0 e 10. Valor informado: %', NEW.nota_obtida;
-    END IF;
-    
-    -- Verifica se o aluno pertence à turma da avaliação
-    PERFORM 1
-    FROM avaliacao av
-    INNER JOIN turma_professor tp ON tp.id_turma_professor = av.id_turma_professor
-    INNER JOIN aluno a ON a.id_turma = tp.id_turma
-    WHERE av.id_avaliacao = NEW.id_avaliacao
-    AND a.id_aluno = NEW.id_aluno;
-    
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'O aluno (id=%) não pertence à turma desta avaliação (id=%)', 
-            NEW.id_aluno, NEW.id_avaliacao;
     END IF;
     
     RETURN NEW;
@@ -439,6 +425,6 @@ COMMENT ON VIEW vw_estatisticas_escola IS 'View com estatísticas gerais por esc
 COMMENT ON FUNCTION fn_calcular_media_final IS 'Calcula a média final ponderada de um aluno em uma disciplina';
 COMMENT ON FUNCTION fn_gerar_relatorio_turma IS 'Gera relatório de desempenho de todos os alunos de uma turma';
 COMMENT ON FUNCTION fn_estatisticas_escola IS 'Retorna estatísticas detalhadas de uma escola específica';
-COMMENT ON FUNCTION fn_validar_nota IS 'Trigger function que valida notas (0-10) e pertinência do aluno à turma';
+COMMENT ON FUNCTION fn_validar_nota IS 'Trigger function que valida notas (0-10)';
 COMMENT ON FUNCTION fn_atualizar_data_lancamento IS 'Trigger function que atualiza data de lançamento ao modificar nota';
 COMMENT ON FUNCTION fn_validar_regra_aprovacao IS 'Trigger function que valida média mínima de aprovação (0-10)';

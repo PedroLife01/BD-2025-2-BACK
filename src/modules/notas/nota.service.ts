@@ -8,7 +8,7 @@
 
 import { prisma } from '../../config';
 import { NotaInput, NotaUpdateInput, NotasBatchInput } from './nota.dto';
-import { AppError, canProfessorAccessTurma } from '../../shared/middlewares';
+import { AppError } from '../../shared/middlewares';
 import {
   PaginationParams,
   getPaginationParams,
@@ -306,38 +306,10 @@ export class NotaService {
       throw new AppError('Avaliação não encontrada', 404, 'AVALIACAO_NOT_FOUND');
     }
 
-    // Verifica permissão para lançar nota
-    if (user) {
-      const idEscolaAvaliacao = avaliacao.turmaProfessor.turma?.idEscola;
-      
-      if (user.role === 'ADMIN') {
-        // Admin pode tudo
-      } else if (user.role === 'COORDENADOR') {
-        if (idEscolaAvaliacao !== user.idEscola) {
-          throw new AppError('Sem permissão para lançar nota nesta escola', 403, 'FORBIDDEN');
-        }
-      } else if (user.role === 'PROFESSOR') {
-        if (avaliacao.turmaProfessor.idProfessor !== user.idProfessor) {
-          throw new AppError('Sem permissão para lançar nota nesta avaliação', 403, 'FORBIDDEN');
-        }
-      } else {
-        throw new AppError('Sem permissão para lançar notas', 403, 'FORBIDDEN');
-      }
-    }
-
     // Valida aluno
     const aluno = await prisma.aluno.findUnique({ where: { id: data.idAluno } });
     if (!aluno) {
       throw new AppError('Aluno não encontrado', 404, 'ALUNO_NOT_FOUND');
-    }
-
-    // Verifica se aluno pertence à turma da avaliação
-    if (aluno.idTurma !== avaliacao.turmaProfessor.idTurma) {
-      throw new AppError(
-        'O aluno não pertence à turma desta avaliação',
-        400,
-        'ALUNO_TURMA_MISMATCH'
-      );
     }
 
     // Verifica se já existe nota para este aluno nesta avaliação
@@ -390,25 +362,6 @@ export class NotaService {
       throw new AppError('Avaliação não encontrada', 404, 'AVALIACAO_NOT_FOUND');
     }
 
-    // Verifica permissão para lançar notas
-    if (user) {
-      const idEscolaAvaliacao = avaliacao.turmaProfessor.turma?.idEscola;
-      
-      if (user.role === 'ADMIN') {
-        // Admin pode tudo
-      } else if (user.role === 'COORDENADOR') {
-        if (idEscolaAvaliacao !== user.idEscola) {
-          throw new AppError('Sem permissão para lançar notas nesta escola', 403, 'FORBIDDEN');
-        }
-      } else if (user.role === 'PROFESSOR') {
-        if (avaliacao.turmaProfessor.idProfessor !== user.idProfessor) {
-          throw new AppError('Sem permissão para lançar notas nesta avaliação', 403, 'FORBIDDEN');
-        }
-      } else {
-        throw new AppError('Sem permissão para lançar notas', 403, 'FORBIDDEN');
-      }
-    }
-
     // Valida todos os alunos
     const alunoIds = data.notas.map((n) => n.idAluno);
     const alunos = await prisma.aluno.findMany({
@@ -417,18 +370,6 @@ export class NotaService {
 
     if (alunos.length !== alunoIds.length) {
       throw new AppError('Um ou mais alunos não foram encontrados', 404, 'ALUNOS_NOT_FOUND');
-    }
-
-    // Verifica se todos os alunos pertencem à turma
-    const alunosForaTurma = alunos.filter(
-      (a: { idTurma: number; nome: string }) => a.idTurma !== avaliacao.turmaProfessor.idTurma
-    );
-    if (alunosForaTurma.length > 0) {
-      throw new AppError(
-        `Os seguintes alunos não pertencem à turma: ${alunosForaTurma.map((a: { nome: string }) => a.nome).join(', ')}`,
-        400,
-        'ALUNOS_TURMA_MISMATCH'
-      );
     }
 
     // Verifica notas já existentes
@@ -467,36 +408,12 @@ export class NotaService {
   }
 
   async update(id: number, data: NotaUpdateInput, user?: UserContext) {
-    // Busca nota com dados da avaliação para verificar acesso
+    // Busca nota
     const notaExistente = await prisma.nota.findUnique({ 
       where: { id },
-      include: {
-        avaliacao: {
-          include: { turmaProfessor: { include: { turma: true } } }
-        }
-      }
     });
     if (!notaExistente) {
       throw new AppError('Nota não encontrada', 404, 'NOTA_NOT_FOUND');
-    }
-
-    // Verifica permissão para editar nota
-    if (user) {
-      const idEscolaNota = notaExistente.avaliacao.turmaProfessor.turma?.idEscola;
-      
-      if (user.role === 'ADMIN') {
-        // Admin pode tudo
-      } else if (user.role === 'COORDENADOR') {
-        if (idEscolaNota !== user.idEscola) {
-          throw new AppError('Sem permissão para editar esta nota', 403, 'FORBIDDEN');
-        }
-      } else if (user.role === 'PROFESSOR') {
-        if (notaExistente.avaliacao.turmaProfessor.idProfessor !== user.idProfessor) {
-          throw new AppError('Sem permissão para editar esta nota', 403, 'FORBIDDEN');
-        }
-      } else {
-        throw new AppError('Sem permissão para editar notas', 403, 'FORBIDDEN');
-      }
     }
 
     const nota = await prisma.nota.update({
@@ -520,33 +437,9 @@ export class NotaService {
   async delete(id: number, user?: UserContext) {
     const nota = await prisma.nota.findUnique({ 
       where: { id },
-      include: {
-        avaliacao: {
-          include: { turmaProfessor: { include: { turma: true } } }
-        }
-      }
     });
     if (!nota) {
       throw new AppError('Nota não encontrada', 404, 'NOTA_NOT_FOUND');
-    }
-
-    // Verifica permissão para deletar nota
-    if (user) {
-      const idEscolaNota = nota.avaliacao.turmaProfessor.turma?.idEscola;
-      
-      if (user.role === 'ADMIN') {
-        // Admin pode tudo
-      } else if (user.role === 'COORDENADOR') {
-        if (idEscolaNota !== user.idEscola) {
-          throw new AppError('Sem permissão para deletar esta nota', 403, 'FORBIDDEN');
-        }
-      } else if (user.role === 'PROFESSOR') {
-        if (nota.avaliacao.turmaProfessor.idProfessor !== user.idProfessor) {
-          throw new AppError('Sem permissão para deletar esta nota', 403, 'FORBIDDEN');
-        }
-      } else {
-        throw new AppError('Sem permissão para deletar notas', 403, 'FORBIDDEN');
-      }
     }
 
     await prisma.nota.delete({ where: { id } });
