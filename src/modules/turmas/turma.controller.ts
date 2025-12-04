@@ -13,7 +13,7 @@ export class TurmaController {
   async findAll(req: Request, res: Response, next: NextFunction) {
     try {
       const params = paginationSchema.parse(req.query);
-      const result = await turmaService.findAll(params);
+      const result = await turmaService.findAll(params, req.user);
       res.json(result);
     } catch (error) {
       next(error);
@@ -23,7 +23,7 @@ export class TurmaController {
   async findById(req: Request, res: Response, next: NextFunction) {
     try {
       const id = parseIntParam(req.params['id']);
-      const result = await turmaService.findById(id);
+      const result = await turmaService.findById(id, req.user);
       res.json(result);
     } catch (error) {
       next(error);
@@ -33,7 +33,7 @@ export class TurmaController {
   async create(req: Request, res: Response, next: NextFunction) {
     try {
       const data = turmaSchema.parse(req.body);
-      const result = await turmaService.create(data);
+      const result = await turmaService.create(data, req.user);
       res.status(201).json(result);
     } catch (error) {
       next(error);
@@ -44,7 +44,7 @@ export class TurmaController {
     try {
       const id = parseIntParam(req.params['id']);
       const data = turmaUpdateSchema.parse(req.body);
-      const result = await turmaService.update(id, data);
+      const result = await turmaService.update(id, data, req.user);
       res.json(result);
     } catch (error) {
       next(error);
@@ -54,7 +54,7 @@ export class TurmaController {
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const id = parseIntParam(req.params['id']);
-      const result = await turmaService.delete(id);
+      const result = await turmaService.delete(id, req.user);
       res.json(result);
     } catch (error) {
       next(error);
@@ -65,7 +65,28 @@ export class TurmaController {
     try {
       const idTurma = parseIntParam(req.params['id']);
       const params = paginationSchema.parse(req.query);
-      const result = await turmaService.findAlunos(idTurma, params);
+      const result = await turmaService.findAlunos(idTurma, params, req.user);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Retorna as turmas do professor logado
+   */
+  async findMinhasTurmas(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!req.user?.idProfessor) {
+        res.status(403).json({
+          success: false,
+          message: 'Apenas professores podem acessar este recurso',
+          error: 'FORBIDDEN',
+        });
+        return;
+      }
+      const params = paginationSchema.parse(req.query);
+      const result = await turmaService.findMinhasTurmas(req.user.idProfessor, params);
       res.json(result);
     } catch (error) {
       next(error);

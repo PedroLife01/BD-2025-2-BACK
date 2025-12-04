@@ -4,7 +4,8 @@
  * ============================================
  * 
  * Endpoints disponíveis:
- * - GET    /api/notas                     → Lista todas as notas
+ * - GET    /api/notas                     → Lista todas as notas (filtrado por usuário)
+ * - GET    /api/notas/minhas              → Lista notas do aluno logado
  * - GET    /api/notas/:id                 → Busca nota por ID
  * - GET    /api/notas/avaliacao/:idAvaliacao → Lista notas por avaliação
  * - GET    /api/notas/aluno/:idAluno      → Lista notas por aluno
@@ -22,10 +23,32 @@ const router = Router();
 
 /**
  * @swagger
+ * /notas/minhas:
+ *   get:
+ *     summary: Lista notas do aluno logado
+ *     description: Retorna todas as notas do aluno autenticado
+ *     tags: [Notas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de notas do aluno
+ *       403:
+ *         description: Apenas alunos podem acessar
+ */
+router.get(
+  '/minhas',
+  authMiddleware,
+  authorizeRoles('ALUNO'),
+  notaController.findMinhasNotas.bind(notaController)
+);
+
+/**
+ * @swagger
  * /notas:
  *   get:
  *     summary: Lista todas as notas
- *     description: Retorna uma lista paginada de notas com informações de aluno e avaliação
+ *     description: Retorna uma lista paginada de notas com informações de aluno e avaliação. Filtrada por contexto do usuário.
  *     tags: [Notas]
  *     security:
  *       - bearerAuth: []

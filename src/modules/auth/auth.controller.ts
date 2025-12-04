@@ -97,6 +97,9 @@ export class AuthController {
    */
   async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      // DEBUG: Log do body recebido
+      console.log('🔍 Login request body:', JSON.stringify(req.body, null, 2));
+      
       // Valida dados de entrada
       const data = loginSchema.parse(req.body);
 

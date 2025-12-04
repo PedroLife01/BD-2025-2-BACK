@@ -19,16 +19,26 @@ datasource db {
 // ============================================
 
 /// Usuário do sistema para autenticação
-/// Pode ser vinculado a coordenador, professor ou admin
+/// Vinculado a coordenador, professor ou aluno
 model Usuario {
-  id         Int      @id @default(autoincrement())
-  email      String   @unique @db.VarChar(100)
-  senhaHash  String   @map("senha_hash") @db.VarChar(255)
-  nome       String   @db.VarChar(100)
-  role       Role     @default(PROFESSOR)
-  ativo      Boolean  @default(true)
-  criadoEm   DateTime @default(now()) @map("criado_em")
-  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+  id            Int      @id @default(autoincrement())
+  email         String   @unique @db.VarChar(100)
+  senhaHash     String   @map("senha_hash") @db.VarChar(255)
+  nome          String   @db.VarChar(100)
+  role          Role     @default(PROFESSOR)
+  ativo         Boolean  @default(true)
+  criadoEm      DateTime @default(now()) @map("criado_em")
+  atualizadoEm  DateTime @updatedAt @map("atualizado_em")
+  
+  // Vínculos com entidades (apenas um deve estar preenchido)
+  idProfessor   Int?     @unique @map("id_professor")
+  idCoordenador Int?     @unique @map("id_coordenador")
+  idAluno       Int?     @unique @map("id_aluno")
+  
+  // Relacionamentos
+  professor     Professor?   @relation(fields: [idProfessor], references: [id], onDelete: SetNull)
+  coordenador   Coordenador? @relation(fields: [idCoordenador], references: [id], onDelete: SetNull)
+  aluno         Aluno?       @relation(fields: [idAluno], references: [id], onDelete: SetNull)
 
   @@map("usuario")
 }
@@ -38,6 +48,7 @@ enum Role {
   ADMIN
   COORDENADOR
   PROFESSOR
+  ALUNO
 }
 
 // ============================================
@@ -108,6 +119,7 @@ model Coordenador {
   // Relacionamentos
   escola          Escola           @relation(fields: [idEscola], references: [id], onDelete: Cascade)
   regrasAprovacao RegraAprovacao[]
+  usuario         Usuario?
 
   @@map("coordenador")
 }
@@ -124,6 +136,7 @@ model Professor {
   // Relacionamentos
   escola            Escola           @relation(fields: [idEscola], references: [id], onDelete: Cascade)
   turmasProfessores TurmaProfessor[]
+  usuario           Usuario?
 
   @@map("professor")
 }
@@ -162,8 +175,9 @@ model Aluno {
   telefoneResponsavel String?  @map("telefone_responsavel") @db.VarChar(20)
 
   // Relacionamentos
-  turma Turma  @relation(fields: [idTurma], references: [id], onDelete: Cascade)
-  notas Nota[]
+  turma   Turma     @relation(fields: [idTurma], references: [id], onDelete: Cascade)
+  notas   Nota[]
+  usuario Usuario?
 
   @@map("aluno")
 }

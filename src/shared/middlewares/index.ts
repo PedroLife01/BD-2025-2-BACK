@@ -10,6 +10,10 @@ export {
   authMiddleware,
   authorizeRoles,
   optionalAuthMiddleware,
+  getEscolaFilter,
+  canAccessEscola,
+  canProfessorAccessTurma,
+  canAlunoAccessData,
 } from './auth.middleware';
 
 export {

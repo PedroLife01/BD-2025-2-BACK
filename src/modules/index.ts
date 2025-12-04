@@ -17,3 +17,4 @@ export * from './vinculos';
 export * from './regras';
 export * from './avaliacoes';
 export * from './notas';
+export * from './relatorios';

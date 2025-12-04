@@ -9,11 +9,12 @@
 import { z } from 'zod';
 
 // Tipo e valores do Role baseado no schema Prisma
-type Role = 'ADMIN' | 'COORDENADOR' | 'PROFESSOR';
+type Role = 'ADMIN' | 'COORDENADOR' | 'PROFESSOR' | 'ALUNO';
 const Role = {
   ADMIN: 'ADMIN' as const,
   COORDENADOR: 'COORDENADOR' as const,
   PROFESSOR: 'PROFESSOR' as const,
+  ALUNO: 'ALUNO' as const,
 };
 
 /**
@@ -36,7 +37,7 @@ export const registerSchema = z.object({
     .min(6, 'Senha deve ter no mínimo 6 caracteres')
     .max(100, 'Senha deve ter no máximo 100 caracteres'),
   role: z
-    .nativeEnum(Role, { errorMap: () => ({ message: 'Role inválida. Use: ADMIN, COORDENADOR ou PROFESSOR' }) })
+    .nativeEnum(Role, { errorMap: () => ({ message: 'Role inválida. Use: ADMIN, COORDENADOR, PROFESSOR ou ALUNO' }) })
     .optional()
     .default(Role.PROFESSOR),
 });
@@ -52,7 +53,8 @@ export const loginSchema = z.object({
     .trim(),
   senha: z
     .string({ required_error: 'Senha é obrigatória' })
-    .min(1, 'Senha é obrigatória'),
+    .min(1, 'Senha é obrigatória')
+    .trim(),
 });
 
 /**

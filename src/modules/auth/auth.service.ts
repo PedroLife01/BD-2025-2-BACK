@@ -95,7 +95,7 @@ export class AuthService {
    * });
    */
   async login(data: LoginInput): Promise<AuthResponse> {
-    // Busca usuário por email
+    // Busca usuário por email com dados de aluno se for ALUNO
     const user = await prisma.usuario.findUnique({
       where: { email: data.email },
       select: {
@@ -105,6 +105,26 @@ export class AuthService {
         role: true,
         senhaHash: true,
         ativo: true,
+        aluno: {
+          select: {
+            id: true,
+            matricula: true,
+            turma: {
+              select: {
+                id: true,
+                nome: true,
+                serie: true,
+                turno: true,
+                escola: {
+                  select: {
+                    id: true,
+                    nome: true,
+                  }
+                }
+              }
+            }
+          }
+        }
       },
     });
 
@@ -125,13 +145,18 @@ export class AuthService {
       throw new AppError('Email ou senha inválidos', 401, 'INVALID_CREDENTIALS');
     }
 
-    // Remove senha do objeto de resposta
-    const userResponse: UserResponse = {
+    // Remove senha do objeto de resposta e adiciona dados de aluno se existir
+    const userResponse: UserResponse & { aluno?: any } = {
       id: user.id,
       nome: user.nome,
       email: user.email,
       role: user.role,
     };
+
+    // Adiciona dados do aluno se existir
+    if (user.aluno) {
+      userResponse.aluno = user.aluno;
+    }
 
     // Gera token JWT
     const token = this.generateToken(userResponse);

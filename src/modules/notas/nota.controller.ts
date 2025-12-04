@@ -13,7 +13,7 @@ export class NotaController {
   async findAll(req: Request, res: Response, next: NextFunction) {
     try {
       const params = paginationSchema.parse(req.query);
-      const result = await notaService.findAll(params);
+      const result = await notaService.findAll(params, req.user);
       res.json(result);
     } catch (error) {
       next(error);
@@ -23,7 +23,7 @@ export class NotaController {
   async findById(req: Request, res: Response, next: NextFunction) {
     try {
       const id = parseIntParam(req.params['id']);
-      const result = await notaService.findById(id);
+      const result = await notaService.findById(id, req.user);
       res.json(result);
     } catch (error) {
       next(error);
@@ -34,7 +34,7 @@ export class NotaController {
     try {
       const idAvaliacao = parseIntParam(req.params['idAvaliacao']);
       const params = paginationSchema.parse(req.query);
-      const result = await notaService.findByAvaliacao(idAvaliacao, params);
+      const result = await notaService.findByAvaliacao(idAvaliacao, params, req.user);
       res.json(result);
     } catch (error) {
       next(error);
@@ -45,7 +45,28 @@ export class NotaController {
     try {
       const idAluno = parseIntParam(req.params['idAluno']);
       const params = paginationSchema.parse(req.query);
-      const result = await notaService.findByAluno(idAluno, params);
+      const result = await notaService.findByAluno(idAluno, params, req.user);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Retorna as notas do aluno logado
+   */
+  async findMinhasNotas(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!req.user?.idAluno) {
+        res.status(403).json({
+          success: false,
+          message: 'Apenas alunos podem acessar este recurso',
+          error: 'FORBIDDEN',
+        });
+        return;
+      }
+      const params = paginationSchema.parse(req.query);
+      const result = await notaService.findMinhasNotas(req.user.idAluno, params);
       res.json(result);
     } catch (error) {
       next(error);
@@ -55,7 +76,7 @@ export class NotaController {
   async create(req: Request, res: Response, next: NextFunction) {
     try {
       const data = notaSchema.parse(req.body);
-      const result = await notaService.create(data);
+      const result = await notaService.create(data, req.user);
       res.status(201).json(result);
     } catch (error) {
       next(error);
@@ -65,7 +86,7 @@ export class NotaController {
   async createBatch(req: Request, res: Response, next: NextFunction) {
     try {
       const data = notasBatchSchema.parse(req.body);
-      const result = await notaService.createBatch(data);
+      const result = await notaService.createBatch(data, req.user);
       res.status(201).json(result);
     } catch (error) {
       next(error);
@@ -76,7 +97,7 @@ export class NotaController {
     try {
       const id = parseIntParam(req.params['id']);
       const data = notaUpdateSchema.parse(req.body);
-      const result = await notaService.update(id, data);
+      const result = await notaService.update(id, data, req.user);
       res.json(result);
     } catch (error) {
       next(error);
@@ -86,7 +107,7 @@ export class NotaController {
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const id = parseIntParam(req.params['id']);
-      const result = await notaService.delete(id);
+      const result = await notaService.delete(id, req.user);
       res.json(result);
     } catch (error) {
       next(error);

@@ -34,6 +34,7 @@ import { vinculoRoutes } from './modules/vinculos';
 import { regraRoutes } from './modules/regras';
 import { avaliacaoRoutes } from './modules/avaliacoes';
 import { notaRoutes } from './modules/notas';
+import { relatorioRoutes } from './modules/relatorios';
 
 // Inicializa Express
 const app = express();
@@ -107,6 +108,7 @@ app.use('/api/vinculos', vinculoRoutes);
 app.use('/api/regras', regraRoutes);
 app.use('/api/avaliacoes', avaliacaoRoutes);
 app.use('/api/notas', notaRoutes);
+app.use('/api/relatorios', relatorioRoutes);
 
 // ============================================
 // ROTA 404

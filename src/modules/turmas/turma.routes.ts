@@ -4,12 +4,13 @@
  * ============================================
  * 
  * Endpoints disponíveis:
- * - GET    /api/turmas         → Lista todas as turmas (com paginação)
- * - GET    /api/turmas/:id     → Busca turma por ID
- * - POST   /api/turmas         → Cria nova turma
- * - PUT    /api/turmas/:id     → Atualiza turma existente
- * - DELETE /api/turmas/:id     → Remove turma
- * - GET    /api/turmas/:id/alunos → Lista alunos da turma
+ * - GET    /api/turmas              → Lista todas as turmas (com paginação e filtro por usuário)
+ * - GET    /api/turmas/minhas       → Lista turmas do professor logado
+ * - GET    /api/turmas/:id          → Busca turma por ID
+ * - POST   /api/turmas              → Cria nova turma
+ * - PUT    /api/turmas/:id          → Atualiza turma existente
+ * - DELETE /api/turmas/:id          → Remove turma
+ * - GET    /api/turmas/:id/alunos   → Lista alunos da turma
  */
 
 import { Router } from 'express';
@@ -20,10 +21,32 @@ const router = Router();
 
 /**
  * @swagger
+ * /turmas/minhas:
+ *   get:
+ *     summary: Lista turmas do professor logado
+ *     description: Retorna as turmas onde o professor logado tem vínculo
+ *     tags: [Turmas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de turmas do professor
+ *       403:
+ *         description: Apenas professores podem acessar
+ */
+router.get(
+  '/minhas',
+  authMiddleware,
+  authorizeRoles('PROFESSOR'),
+  turmaController.findMinhasTurmas.bind(turmaController)
+);
+
+/**
+ * @swagger
  * /turmas:
  *   get:
  *     summary: Lista todas as turmas
- *     description: Retorna uma lista paginada de turmas com informações da escola
+ *     description: Retorna uma lista paginada de turmas com informações da escola. Filtrada por escola do usuário.
  *     tags: [Turmas]
  *     security:
  *       - bearerAuth: []
