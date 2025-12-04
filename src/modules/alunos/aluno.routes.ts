@@ -276,7 +276,7 @@ router.put(
 router.delete(
   '/:id',
   authMiddleware,
-  authorizeRoles('ADMIN'),
+  authorizeRoles('ADMIN', 'COORDENADOR'),
   alunoController.delete.bind(alunoController)
 );
 
